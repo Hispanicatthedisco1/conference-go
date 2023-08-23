@@ -14,3 +14,4 @@ sqlparse==0.4.2
 tomli==2.0.1
 whitenoise==5.3.0
 request==
+gunicorn==21.2.0

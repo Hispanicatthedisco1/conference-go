@@ -9,9 +9,8 @@ from .acls import get_picture_url
 
 class ConferenceListEncoder(ModelEncoder):
     model = Conference
-    properties = [
-        "name"
-    ]
+    properties = ["name"]
+
 
 @require_http_methods(["GET", "POST"])
 def api_list_conferences(request):
@@ -20,7 +19,7 @@ def api_list_conferences(request):
         return JsonResponse(
             {"conferences": conferences},
             encoder=ConferenceListEncoder,
-    )
+        )
 
     else:
         content = json.loads(request.body)
@@ -28,22 +27,16 @@ def api_list_conferences(request):
             location = Location.objects.get(id=content["location"])
             content["location"] = location
         except Location.DoesNotExist:
-            return JsonResponse(
-                {"message": "Invalid location id"},
-                status=400
-            )
+            return JsonResponse({"message": "Invalid location id"}, status=400)
 
         conference = conference.objects.create(**content)
         return JsonResponse(
-            conference,
-            encoder=ConferenceDetailEncoder,
-            safe= False
+            conference, encoder=ConferenceDetailEncoder, safe=False
         )
 
 
 class LocationListEncoder(ModelEncoder):
     model = Locationproperties = ["name"]
-
 
 
 class ConferenceDetailEncoder(ModelEncoder):
@@ -116,6 +109,7 @@ def api_show_conference(request, id):
     }
     """
 
+
 @require_http_methods(["GET", "POST"])
 def api_list_locations(request):
     if request.method == "GET":
@@ -123,7 +117,7 @@ def api_list_locations(request):
         return JsonResponse(
             {"locations": locations},
             encoder=LocationListEncoder,
-    )
+        )
 
     else:
         content = json.loads(request.body)
@@ -135,7 +129,7 @@ def api_list_locations(request):
             {"message": "Invalid state abbreviation"},
             status=400,
         )
-    
+
     state_full_name = content["state"].name
     print(state_full_name)
 
@@ -145,12 +139,7 @@ def api_list_locations(request):
     content["picture_url"] = picture_url
 
     location = Location.objects.create(**content)
-    return JsonResponse(
-        location,
-        encoder=LocationDetailEncoder,
-        safe=False
-    )
-
+    return JsonResponse(location, encoder=LocationDetailEncoder, safe=False)
 
 
 class LocationDetailEncoder(ModelEncoder):
@@ -165,8 +154,8 @@ class LocationDetailEncoder(ModelEncoder):
     ]
 
     def get_extra_data(self, o):
-        return {"state": o.state.abbrevaiation
-                }
+        return {"state": o.state.abbrevaiation}
+
 
 @require_http_methods(["DELETE", "GET", "PUT"])
 def api_show_location(request, id):
@@ -178,11 +167,11 @@ def api_show_location(request, id):
             safe=False,
         )
     elif request.method == "DELETE":
-        count, _= Location.objects.filter(id=id).delete()
+        count, _ = Location.objects.filter(id=id).delete()
         return JsonResponse({"delete": count > 0})
 
     else:
-    # copied from create
+        # copied from create
         content = json.loads(request.body)
         try:
             # new code
